@@ -1,23 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { env } from '@/env';
 import type { CreateQuestionRequest } from './types/create-question-request';
 import type { CreateQuestionResponse } from './types/create-question-response';
 import type { getRoomQuestionsResponse } from './types/get-room-questions-response';
+
+const baseURL = env.VITE_API_URL;
 
 export function useCreateQuestion(roomId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (data: CreateQuestionRequest) => {
-      const response = await fetch(
-        `http://localhost:3333/room/${roomId}/question`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
+      const response = await fetch(`${baseURL}/room/${roomId}/question`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
       const result: CreateQuestionResponse = await response.json();
 
@@ -81,9 +81,5 @@ export function useCreateQuestion(roomId: string) {
         );
       }
     },
-
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({ queryKey: ['get-questions', roomId] });
-    // },
   });
 }
